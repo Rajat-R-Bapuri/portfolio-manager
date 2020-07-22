@@ -7,13 +7,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class DatabaseConfig {
+public class InfluxDatabaseConfig {
 
 
     private final String dbUrl;
     private final String databaseName;
 
-    public DatabaseConfig(@Value("${influxdb.url}") String dbUrl, @Value("${influxdb.dbName}") String databaseName) {
+    public InfluxDatabaseConfig(@Value("${influxdb.url}") String dbUrl, @Value("${influxdb.dbName}") String databaseName) {
         this.dbUrl = dbUrl;
         this.databaseName = databaseName;
     }
