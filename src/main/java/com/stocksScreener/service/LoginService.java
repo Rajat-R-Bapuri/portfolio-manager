@@ -20,20 +20,20 @@ import java.util.Optional;
 @Service
 public class LoginService {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final JWTUtil jwtUtil;
     private final String GOOGLE_CLIENT_ID;
 
     /**
      * Constructs a LoginService with specified UserRepository, JWTUtil objects and GOOGLE_CLIENT_ID string
-     * @param userRepository UserRepository object
+     * @param userService UserService object
      * @param jwtUtil
      * @param GOOGLE_CLIENT_ID
      */
     @Autowired
-    public LoginService(UserRepository userRepository, JWTUtil jwtUtil,
+    public LoginService(UserService userService, JWTUtil jwtUtil,
                         @Value("${google.clientID}") String GOOGLE_CLIENT_ID) {
-        this.userRepository = userRepository;
+        this.userService = userService;
         this.jwtUtil = jwtUtil;
         this.GOOGLE_CLIENT_ID = GOOGLE_CLIENT_ID;
     }
@@ -64,11 +64,11 @@ public class LoginService {
             final String name = (String) payload.get("name");
             final String pictureUrl = (String) payload.get("picture");
 
-            Optional<User> user = userRepository.findById(userId);
+            Optional<User> user = userService.findById(userId);
 
             if (user.isPresent()) {
                 jwt = jwtUtil.createToken(user.get());
-                userRepository.save(user.get());
+                userService.saveUser(user.get());
             } else {
                 insertUserToDatabase(userId, email, name, pictureUrl);
             }
@@ -84,6 +84,6 @@ public class LoginService {
      * @param pictureUrl Url for the avatar of the user
      */
     private void insertUserToDatabase(String userId, String email, String name, String pictureUrl) {
-        userRepository.save(new User(userId, email, name, pictureUrl, "google"));
+        userService.saveUser(new User(userId, email, name, pictureUrl, "google"));
     }
 }
