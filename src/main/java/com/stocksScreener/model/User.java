@@ -3,6 +3,7 @@ package com.stocksScreener.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.LinkedHashSet;
 import java.util.Map;
 
 @Document
@@ -15,7 +16,8 @@ public class User {
     private String userFullName;
     private String imageUrl;
     private String signInType;
-    private Map<String, Integer> stockSymbols;
+    private Map<String, Integer> stocksHeld;
+    private LinkedHashSet<String> watchlist;
 
     public User(String id, String userEmail, String userFullName, String imageUrl, String signInType) {
         this.id = id;
@@ -65,12 +67,20 @@ public class User {
         this.signInType = signInType;
     }
 
-    public Map<String, Integer> getStockSymbols() {
-        return stockSymbols;
+    public Map<String, Integer> getStocksHeld() {
+        return stocksHeld;
     }
 
-    public void setStockSymbols(Map<String, Integer> stockSymbols) {
-        this.stockSymbols = stockSymbols;
+    public void setStocksHeld(Map<String, Integer> stocksHeld) {
+        this.stocksHeld = stocksHeld;
+    }
+
+    public LinkedHashSet<String> getWatchlist() {
+        return watchlist;
+    }
+
+    public void setWatchlist(LinkedHashSet<String> watchlist) {
+        this.watchlist = watchlist;
     }
 
     @Override
@@ -81,7 +91,8 @@ public class User {
                 ", userFullName='" + userFullName + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +
                 ", signInType='" + signInType + '\'' +
-                ", stockSymbols=" + stockSymbols +
+                ", stocksHeld=" + stocksHeld +
+                ", watchlist=" + watchlist +
                 '}';
     }
 }
