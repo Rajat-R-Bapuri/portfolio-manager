@@ -18,7 +18,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/stocks")
-@CrossOrigin("*")
 public class StockPriceController {
 
     private final InfluxDB influxDB;
@@ -41,15 +40,14 @@ public class StockPriceController {
 
         QueryResult queryResult = influxDB.query(QueryUtil.formHistoryQuery(symbol, period));
 
-        System.out.println(queryResult);
-
         for (QueryResult.Result qr : queryResult.getResults()) {
-            for (QueryResult.Series series1 : qr.getSeries()) {
-                for (List<Object> x : series1.getValues()) {
-                    StockPrice sd = new StockPrice((String) x.get(0), (Double) x.get(1));
-                    stockHistory.add(sd);
+            if (qr.getSeries() != null)
+                for (QueryResult.Series series1 : qr.getSeries()) {
+                    for (List<Object> x : series1.getValues()) {
+                        StockPrice sd = new StockPrice((String) x.get(0), (Double) x.get(1));
+                        stockHistory.add(sd);
+                    }
                 }
-            }
         }
 
         result.put("data", stockHistory);
