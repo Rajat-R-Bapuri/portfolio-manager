@@ -1,9 +1,15 @@
 package com.stocksScreener.model;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.util.List;
 
+@Document
 public class StockDetails {
+    @Id
     private String symbol;
+
     private String companyName;
     private String exchange;
     private String industry;
