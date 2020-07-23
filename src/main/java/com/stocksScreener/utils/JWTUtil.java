@@ -1,10 +1,9 @@
 package com.stocksScreener.utils;
 
 import com.stocksScreener.model.User;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +33,7 @@ public class JWTUtil {
                 .compact();
     }
 
-    public Claims extractAllClaims(String token) {
+    public Claims extractAllClaims(String token) throws SignatureException {
         return Jwts.parserBuilder().setSigningKey(SECRET_KEY.getBytes()).build().parseClaimsJws(token).getBody();
     }
 
@@ -55,8 +54,13 @@ public class JWTUtil {
         return extractExpiry(token).before(new Date());
     }
 
-    public Boolean validateToken(String token, User user) {
-        final String username = extractUsername(token);
-        return username.equals(user.getUserEmail()) && !isTokenExpired(token);
+    public Boolean validateToken(String token) {
+        try {
+            final String username = extractUsername(token);
+            return username != null && !username.equals("") && !isTokenExpired(token);
+        } catch (SignatureException | MalformedJwtException | ExpiredJwtException | IllegalArgumentException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
