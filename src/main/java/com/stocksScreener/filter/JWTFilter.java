@@ -36,18 +36,19 @@ public class JWTFilter extends OncePerRequestFilter {
             jwtToken = requestTokenHeader.substring(7);
         } else {
             System.out.println("JWT Token does not begin with Bearer String");
-            httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
 
         // Once we get the token validate it.
-        if (SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (SecurityContextHolder.getContext().getAuthentication() == null && jwtToken != null) {
             try {
-                if (!jwtUtil.validateToken(jwtToken)) {
+                if (jwtUtil.validateToken(jwtToken)) {
+                    System.out.println("Valid token");
+                    httpServletRequest.setAttribute("emailId", jwtUtil.extractUsername(jwtToken));
+                    filterChain.doFilter(httpServletRequest, httpServletResponse);
+                } else {
                     System.out.println("Invalid token");
                     httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-                } else {
-                    System.out.println("Valid token");
-                    filterChain.doFilter(httpServletRequest, httpServletResponse);
                 }
             } catch (IOException | ServletException e) {
                 e.printStackTrace();
