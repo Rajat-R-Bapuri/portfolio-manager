@@ -61,6 +61,7 @@ public class JWTFilter extends OncePerRequestFilter {
         System.out.println("Path " + request.getServletPath());
         List<String> urls = new ArrayList<>();
         urls.add("/google/login");
+        urls.add("/stocks/price");
         return urls.stream().anyMatch(s -> s.equals(request.getServletPath()));
     }
 }
