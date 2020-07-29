@@ -32,6 +32,28 @@ public class StockPriceController {
         return null;
     }
 
+    private Map<String, StockPrice> fetchPrices(List<String> symbols){
+        QueryResult queryResult = influxDB.query(QueryUtil.formLastPriceQuery(symbols));
+        System.out.println(queryResult);
+        Map<String, StockPrice> response = new HashMap<>();
+
+        for (QueryResult.Result qr : queryResult.getResults()) {
+            List<QueryResult.Series> series = qr.getSeries();
+
+            for (QueryResult.Series series1 : series) {
+                StockPrice sd = new StockPrice((String) series1.getValues().get(0).get(0), (Double) series1.getValues().get(0).get(1));
+                response.put(series1.getName(), sd);
+                System.out.println(response);
+            }
+        }
+        return response;
+    }
+
+    @GetMapping("/current/price")
+    public Mono<Map<String, StockPrice>> singleStockPrices(@RequestParam("symbols") List<String> symbols) {
+        return Mono.just(fetchPrices(symbols));
+    }
+
     @GetMapping("/{symbol}/history/{period}")
     public Map<String, List<StockPrice>> getStockHistory(@PathVariable("symbol") String symbol, @PathVariable("period") String period) {
 
@@ -59,21 +81,6 @@ public class StockPriceController {
     public Flux<Map<String, StockPrice>> getStockPrices(@RequestParam("symbols") List<String> symbols) {
         return Flux
                 .interval(Duration.ofSeconds(6))
-                .map(symbol -> {
-                    QueryResult queryResult = influxDB.query(QueryUtil.formLastPriceQuery(symbols));
-                    System.out.println(queryResult);
-                    Map<String, StockPrice> response = new HashMap<>();
-
-                    for (QueryResult.Result qr : queryResult.getResults()) {
-                        List<QueryResult.Series> series = qr.getSeries();
-
-                        for (QueryResult.Series series1 : series) {
-                            StockPrice sd = new StockPrice((String) series1.getValues().get(0).get(0), (Double) series1.getValues().get(0).get(1));
-                            response.put(series1.getName(), sd);
-                            System.out.println(response);
-                        }
-                    }
-                    return response;
-                });
+                .map(temp -> fetchPrices(symbols));
     }
 }
