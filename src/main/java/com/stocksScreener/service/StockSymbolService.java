@@ -5,18 +5,23 @@ import com.stocksScreener.repository.StockSymbolRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@CacheConfig(cacheNames={"StockSymbols"})
+@CacheConfig(cacheNames = {"StockSymbols"})
 public class StockSymbolService {
     private final StockSymbolRepository stockSymbolRepository;
+    private final MongoOperations mongoOperations;
 
     @Autowired
-    public StockSymbolService(StockSymbolRepository stockSymbolRepository) {
+    public StockSymbolService(StockSymbolRepository stockSymbolRepository,
+                              MongoOperations mongoOperations) {
         this.stockSymbolRepository = stockSymbolRepository;
+        this.mongoOperations = mongoOperations;
     }
 
     public void addSymbols(List<StockSymbol> stockSymbols) {
@@ -25,6 +30,9 @@ public class StockSymbolService {
 
     @Cacheable
     public List<StockSymbol> getSymbols(String searchKey) {
-        return stockSymbolRepository.findAllBySymbolContaining(searchKey);
+        if (searchKey.matches("[a-zA-Z]*")) {
+            return stockSymbolRepository.findSymbol(".*" + searchKey + ".*");
+        }
+        return new ArrayList<>();
     }
 }
