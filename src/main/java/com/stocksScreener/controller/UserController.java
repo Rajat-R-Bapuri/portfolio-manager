@@ -29,7 +29,7 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/profile/addSymbols")
+    @PostMapping(value = "/profile/watchlist/add")
     public ResponseEntity<?> addSymbols(@RequestBody Map<String, List<String>> body,
                                         HttpServletRequest httpServletRequest) {
         String jwtEmailId = (String) httpServletRequest.getAttribute("emailId");
@@ -42,7 +42,7 @@ public class UserController {
         }
     }
 
-    @PostMapping(value = "/profile/removeSymbols")
+    @PostMapping(value = "/profile/watchlist/remove")
     public ResponseEntity<?> removeSymbols(@RequestBody Map<String, List<String>> body,
                                         HttpServletRequest httpServletRequest) {
         String jwtEmailId = (String) httpServletRequest.getAttribute("emailId");
