@@ -27,4 +27,9 @@ public class StockSymbolController {
     public List<StockSymbol> getSymbols(@RequestParam("query") String query){
         return stockSymbolService.getSymbols(query);
     }
+
+    @GetMapping("/symbols/popular")
+    public List<StockSymbol> getPopularSymbols(){
+        return stockSymbolService.getPopularSymbols();
+    }
 }

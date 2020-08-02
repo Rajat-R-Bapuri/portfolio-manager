@@ -8,6 +8,7 @@ public class StockSymbol {
     @Id
     private String symbol;
     private String name;
+    private long popularity;
 
     public String getSymbol() {
         return symbol;
@@ -23,5 +24,13 @@ public class StockSymbol {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public long getPopularity() {
+        return popularity;
+    }
+
+    public void setPopularity(long popularity) {
+        this.popularity = popularity;
     }
 }
